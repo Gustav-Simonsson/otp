@@ -20,7 +20,7 @@
 
 -module(edoc_specs).
 
--export([type/2, spec/2, dummy_spec/1, docs/2]).
+-export([type/2, spec/1, dummy_spec/1, docs/2]).
 
 -export([add_data/4, tag/1, is_tag/1]).
 
@@ -65,15 +65,18 @@ type(Form, TypeDocs) ->
                             type = d2e(opaque2abstr(Name, Type))},
                  Doc}}.
 
--spec spec(Form::syntaxTree(), ClauseN::pos_integer()) -> #tag{}.
+-spec spec(Form::syntaxTree()) -> [#tag{}].
 
 %% @doc Convert an Erlang spec to EDoc representation.
-spec(Form, Clause) ->
+spec(Form) ->
     {Name, _Arity, TypeSpecs} = get_spec(Form),
-    TypeSpec = lists:nth(Clause, TypeSpecs),
-    #tag{name = spec, line = element(2, TypeSpec),
-         origin = code,
-         data = aspec(d2e(TypeSpec), Name)}.
+    MakeSpec =
+        fun(TypeSpec) ->
+                #tag{name = spec, line = element(2, TypeSpec),
+                     origin = code,
+                     data = aspec(d2e(TypeSpec), Name)}
+        end,
+    lists:map(MakeSpec, TypeSpecs).
 
 -spec dummy_spec(Form::syntaxTree()) -> #tag{}.
 

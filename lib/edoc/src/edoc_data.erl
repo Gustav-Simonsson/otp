@@ -134,9 +134,10 @@ types(Tags, Env) ->
      || #tag{name = type, data = {Def, Doc}} <- Tags].
 
 functions(Es, Env, Opts) ->
-    [function(N, As, Export, Ts, Env, Opts)
-     || #entry{name = {_,_}=N, args = As, export = Export, data = Ts}
-	    <- Es].
+    lists:flatten(
+      [[function(N, As, Export, [Ts], Env, Opts) || Ts <- TypeSpecs]
+       || #entry{name = {_,_}=N, args = As, export = Export, data = TypeSpecs}
+              <- Es]).
 
 hidden_filter(Es, Opts) ->
     Private = proplists:get_bool(private, Opts),

@@ -347,12 +347,36 @@ label_href(Content, F) ->
 
 functions(Fs, Opts) ->
     Es = lists:flatmap(fun ({Name, E}) -> function(Name, E, Opts) end, Fs),
+    EsMerged = merge_multiple_typespecs(Es, [], []),
     if Es == [] -> [];
        true ->
 	    [?NL,
 	     {h2, [{a, [{name, ?FUNCTIONS_LABEL}], [?FUNCTIONS_TITLE]}]},
-	     ?NL | Es]
+	     ?NL | EsMerged]
     end.
+
+merge_multiple_typespecs([], _Acc, NewList) ->
+    lists:reverse(NewList);
+merge_multiple_typespecs([H|T], Acc, NewList) ->
+    case get_function_name(H) of
+        false ->
+            merge_multiple_typespecs(T, Acc, [H|NewList]);
+        Name ->
+            case lists:member(Name, Acc) of
+                false ->
+                    merge_multiple_typespecs(T, [Name|Acc], [H|NewList]);
+                true ->
+                    NewLine = fun("\n") -> true; (_) -> false end,
+                    merge_multiple_typespecs(
+                      lists:dropwhile(NewLine,T), Acc,
+                      lists:dropwhile(NewLine, NewList))
+            end
+    end.
+
+get_function_name({_,[{_,"function"}],[{_,[{name,Name}],_}]}) ->
+    Name;
+get_function_name(_) ->
+    false.
 
 function(Name, E=#xmlElement{content = Es}, Opts) ->
     ([?NL,
