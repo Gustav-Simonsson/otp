@@ -258,7 +258,7 @@ shell(Host, Port, Options) ->
 %% Description: Use SSH key to sign data.
 %%--------------------------------------------------------------------
 sign_data(Data, Algorithm) when is_binary(Data) ->
-    case ssh_file:private_identity_key(Algorithm,[]) of
+    case ssh_key:private_identity_key(Algorithm,[]) of
 	{ok, Key} when Algorithm == "ssh-rsa" ->
 	    ssh_rsa:sign(Key, Data);
 	Error ->
@@ -276,7 +276,7 @@ sign_data(Data, Algorithm) when is_binary(Data) ->
 %% Description: Use SSH signature to verify data.
 %%--------------------------------------------------------------------
 verify_data(Data, Signature, Algorithm) when is_binary(Data), is_binary(Signature) ->
-    case ssh_file:public_identity_key(Algorithm, []) of
+    case ssh_key:public_identity_key(Algorithm, []) of
 	{ok, Key} when Algorithm == "ssh-rsa" ->
 	    ssh_rsa:verify(Key, Data, Signature);
 	Error ->

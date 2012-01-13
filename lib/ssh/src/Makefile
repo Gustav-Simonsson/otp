@@ -46,6 +46,8 @@ MODULES= \
 	ssh_connection_handler \
 	ssh_connection_manager \
 	ssh_connection_controler \
+	ssh_key \
+	ssh_key_default \
 	ssh_shell \
 	ssh_system_sup \
 	ssh_subsystem_sup \

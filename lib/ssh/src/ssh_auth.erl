@@ -42,7 +42,7 @@ publickey_msg([Cb, #ssh{user = User,
 		       opts = Opts} = Ssh]) ->
     ssh_bits:install_messages(userauth_pk_messages()),
     Alg = Cb:alg_name(),
-    case ssh_file:private_identity_key(Alg, Opts) of
+    case ssh_key:private_identity_key(Alg, Opts) of
 	{ok, PrivKey} ->
 	    PubKeyBlob = ssh_file:encode_public_key(PrivKey),
 	    SigData = build_sig_data(SessionId, 
@@ -312,7 +312,7 @@ get_password_option(Opts, User) ->
     end.
 	    
 verify_sig(SessionId, User, Service, Alg, KeyBlob, SigWLen, Opts) ->
-    case ssh_file:lookup_user_key(User, Alg, Opts) of
+    case ssh_key:lookup_user_key(User, Alg, Opts) of
 	{ok, OurKey} ->
 	    {ok, Key} = ssh_file:decode_public_key_v2(KeyBlob, Alg),
 	    case OurKey of
