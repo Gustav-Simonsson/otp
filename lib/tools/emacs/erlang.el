@@ -2907,7 +2907,7 @@ Return nil if inside string, t if in a comment."
 		      ;; If in fun definition use standard indent level not double
 		      ;;(if (not (eq (car (car (cdr stack))) 'fun))
 		      ;; Removed it made multi clause fun's look to bad
-		      (setq off (* 2 erlang-indent-level)))) ;; ) 
+		      (setq off erlang-indent-level))) ;; )
 	       (let ((base (erlang-indent-find-base stack indent-point off skip)))
 		 ;; Special cases
 		 (goto-char indent-point)
